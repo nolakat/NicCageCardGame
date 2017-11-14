@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Matching Game</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/nnattawat/flip/master/dist/jquery.flip.min.js"></script>
+    <link rel="stylesheet" href="style.css"/>
+    	
+    <script>
+
+
+
+  
+
+    	$( document ).ready(function() {
+        console.log( "document loaded" );
+        lastCard = "";
+        numTurn = 0;
+        matchNum = 0; 
+
+        
+        createGame();
+
+
+      
+        	$(".card").on("click", function(){
+
+        		gameLogic(this.className);
+        	});
+
+        	// $(".card").trigger("click");
+        
+    });
+
+
+
+    	function gameLogic(className){
+
+          var currentCard = className;
+         
+
+          	if (numTurn == 0){
+          		console.log("turn 0");
+          		lastCard = currentCard;
+          	    numTurn++;
+
+
+          	} else if (numTurn == 1){
+          		console.log("turn 1");
+
+          		if(currentCard == lastCard){
+
+    			//ifMatch 
+    			console.log("MATCH!!!!");
+    			console.log("last card:  " + lastCard);
+    			console.log("current card:  " + currentCard);
+    			matchpairs = document.getElementsByClassName(currentCard);
+
+    			console.log("matching: " + matchpairs);
+    			$(matchpairs).addClass("matched");
+    			setTimeout(function(){
+    				$(matchpairs).flip(true);
+    			}, 500);
+    			numTurn = 0;
+    			matchNum++;
+
+    			if(matchNum == 4){
+    				console.log("You Win!!!");
+    				$('#win-msg').show();
+
+    			}
+    			
+    			//clearGame();
+    		} else{
+
+    			console.log("no match!");
+    			setTimeout(function(){
+    				clearGame();
+    			}, 500);
+    			//clearGame();
+
+    		}
+
+    		console.log("turn finished");
+
+          	}
+
+    		
+
+
+
+
+
+
+    	
+    }//end gamelogic
+
+    function clearGame(){
+			currentCard = " ";
+    		lastCard = " ";
+    		$(".card").flip(false);
+    		$(".matched").flip(true);
+
+    		numTurn = 0;
+    }
+
+
+    
+
+
+    	function createGame(){
+    		console.log("game running");
+
+    		var cardIds = []; 
+    		var matchArray = [];
+    		var numberOfCards = 2;
+    		var x = 0;
+
+    		while(x < 4){
+    			
+
+    			for(i = 0; i < 2; i++){
+    				var id = ""+ x + i;
+    				matchArray.push(x);
+    				cardIds.push(id);
+  
+    				createCard(id);
+    			}
+    			x++
+    		}
+
+    		     assignMatchNum(matchArray, cardIds);
+    		     $('.card').flip();
+
+    	}//end create game
+
+
+    	function createCard(id){
+    		// console.log("create card running...");
+    		// console.log("card id: " + id);
+
+    		var cardWrap = document.createElement("li");
+
+    		var cardDiv = document.createElement("div");
+    		$(cardDiv).addClass("card");
+    		cardDiv.id = id;
+
+    		var frontDiv = document.createElement("div");
+    		$(frontDiv).addClass("front");
+
+    		var backDiv = document.createElement("div");
+    		$(backDiv).addClass("back");
+
+    		cardWrap.appendChild(cardDiv);
+    		cardDiv.appendChild(frontDiv);
+    		cardDiv.appendChild(backDiv);
+
+    		var lastCard = document.getElementById('lastcard');
+            var parentDiv = lastCard.parentNode;
+
+    		parentDiv.insertBefore(cardWrap, lastCard);
+
+    	}
+        
+
+
+    	function assignMatchNum(Matcharray, IDarray){
+
+    //shuffle array
+    for (var i = Matcharray.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = Matcharray[i];
+        Matcharray[i] = Matcharray[j];
+        Matcharray[j] = temp;
+    }
+    			//assign cards match numbers
+        		var numOfCards = IDarray.length;
+        		for(i = 0; i <= numOfCards-1; i++){
+        			var card = document.getElementById(IDarray[i]);
+        		    $(card).addClass(`match${Matcharray[i]}`);
+        		       }
+
+
+
+
+    	}//end assignMatchNum
+    	
+    </script>
+
+
+  </head>
+  <body>
+  	<div id="win-msg"><h1>YOU'RE A WINNER!!!</h1><img src="img/nickhead.png"></div>
+	<div id="game-box">
+  	<ul id="card-list">
+  		<li id="lastcard"> </li>
+  	</ul>
+  </div>
+  </body>
+</html>
